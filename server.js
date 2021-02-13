@@ -88,7 +88,7 @@ app.get('/', async (req, res, next) => {
   }
 });
 
-app.post();
+app.post('/purchase/:id', async (req, res, next) => {});
 
 const init = async () => {
   try {
