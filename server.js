@@ -1,6 +1,6 @@
 const {
   syncAndSeed,
-  models: { Person, Place, Thing },
+  models: { Person, Place, Thing, Purchase },
 } = require('./db.js');
 const express = require('express');
 const app = express();
@@ -8,11 +8,19 @@ const html = require('html-template-tag');
 
 app.get('/', async (req, res, next) => {
   try {
-    const [people, things, places] = await Promise.all([
+    const [people, things, places, purchases] = await Promise.all([
       Person.findAll(),
       Thing.findAll(),
       Place.findAll(),
+      Purchase.findAll( {
+        include: [
+          {model: Place},
+          {model: Person},
+          {model: Thing}
+        ]
+      }),
     ]);
+    console.log(purchases)
     res.send(html`
       <html>
         <head>
@@ -50,7 +58,7 @@ app.get('/', async (req, res, next) => {
                 .join('')}
             </ul>
           </div>
-          <form method="POST" action="/purchase/${purchase.id}">
+          <form method="POST" >
             <select name="personId">
               <option>--person--</option>
               $${people
@@ -79,7 +87,10 @@ app.get('/', async (req, res, next) => {
             <input type="date" />
             <button>Create Purchase</button>
           </form>
-          <ul></ul>
+          <div>
+            <h3>Purchase List </h3>
+
+          </div>
         </body>
       </html>
     `);
@@ -88,7 +99,7 @@ app.get('/', async (req, res, next) => {
   }
 });
 
-app.post('/purchase/:id', async (req, res, next) => {});
+// app.post('/purchase/:id', async (req, res, next) => {});
 
 const init = async () => {
   try {

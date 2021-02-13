@@ -4,7 +4,7 @@ const Sequelize = require('sequelize');
 const { STRING, INTEGER, DATE } = Sequelize;
 
 const db = new Sequelize(
-  process.env.DATABASE_URL || 'postgres://localhost/acme_people_places_things'
+  process.env.DATABASE_URL || 'postgres://localhost/acme_people_places_things', { logging: false }
 );
 
 const Person = db.define('person', {
@@ -39,6 +39,10 @@ const Purchase = db.define('purchase', {
   date: {
     type: DATE,
   },
+  // personId,
+  // thingId
+  // placeId
+
 });
 
 Person.hasMany(Thing);
@@ -47,11 +51,12 @@ Person.hasMany(Place);
 //Place.belongsToMany(Person);
 Purchase.belongsTo(Person);
 Purchase.belongsTo(Thing);
+Purchase.belongsTo(Place);
 
 const syncAndSeed = async () => {
   await db.sync({ force: true });
-  const [moe, lucy, curly] = await Promise.all(
-    ['moe', 'lucy', 'curly'].map((name) => Person.create({ name }))
+  const [moe, lucy, larry] = await Promise.all(
+    ['moe', 'lucy', 'larry'].map((name) => Person.create({ name }))
   );
   const [NYC, Chicago, LA, Dallas] = await Promise.all(
     ['NYC', 'Chicago', 'LA', 'Dallas'].map((name) => Place.create({ name }))
@@ -59,6 +64,27 @@ const syncAndSeed = async () => {
   const [foo, bar, bazz, quq] = await Promise.all(
     ['foo', 'bar', 'bazz', 'quq'].map((name) => Thing.create({ name }))
   );
+  const purchThing1 = await Purchase.create({
+    thingId: 1,
+    personId: 1,
+    placeId: 3,
+    quantity: 3,
+    date: '10/31/2020'
+   })
+   const purchThing2 = await Purchase.create({
+    thingId: 2,
+    personId: 3,
+    quantity: 1,
+    placeId: 2,
+    date: '11/06/2019'
+   })
+   const purchThing3 = await Purchase.create({
+    thingId: 3,
+    personId: 2,
+    quantity: 11,
+    placeId: 2,
+    date: '03/15/2020'
+   })
 };
 
 module.exports = {
@@ -67,6 +93,6 @@ module.exports = {
     Person,
     Place,
     Thing,
-    //Purchase
+    Purchase
   },
 };
