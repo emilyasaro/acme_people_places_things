@@ -92,10 +92,9 @@ app.get('/', async (req, res, next) => {
                 <ul>
                   $${purchases
                 .map((purchase) => {
-
                   return html`
                   <li>
-                    ${purchase['placeId']}
+                    ${purchase.person.name} purchased ${purchase.quantity} ${purchase.thing.name} in ${purchase.place.name} on ${purchase.date}
                    </li>
                 `})
                 .join('')}
