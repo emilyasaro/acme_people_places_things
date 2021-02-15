@@ -20,7 +20,7 @@ app.get('/', async (req, res, next) => {
         ]
       }),
     ]);
-    console.log(purchases)
+    // console.log(purchases)
     res.send(html`
       <html>
         <head>
@@ -89,7 +89,18 @@ app.get('/', async (req, res, next) => {
           </form>
           <div>
             <h3>Purchase List </h3>
+                <ul>
+                  $${purchases
+                .map((purchase) => {
 
+                  return html`
+                  <li>
+                    ${purchase['placeId']}
+                   </li>
+                `})
+                .join('')}
+
+                </ul>
           </div>
         </body>
       </html>
@@ -97,7 +108,7 @@ app.get('/', async (req, res, next) => {
   } catch (ex) {
     next(ex);
   }
-});
+}); // map through purchases. Find.all is an array itself, so try mapping. Try out Object.entries and console log
 
 // app.post('/purchase/:id', async (req, res, next) => {});
 
